@@ -1,0 +1,5 @@
+pymongo
+loguru
+gitpython
+bashlex
+yaml

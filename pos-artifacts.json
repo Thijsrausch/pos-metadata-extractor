@@ -1,0 +1,1526 @@
+{
+    "created_at": "2025-01-10",
+    "updated_at": "2025-01-10",
+    "readme": {
+        "title": "Experiment artifacts",
+        "sections": [
+            {
+                "title": "Content",
+                "content": "The experiment and its results are contained in the following folders.\nTo fully document the actual experiments, all artifacts listed below must be released.\n\n* `./experiment`: Experiment scripts to be executed on the pos management host\n* `./results`: Measurement results of the executed experiment\n* `./plot_scripts`: Plotting scripts for generating plots\n* `./figures`: Generated plots (tex and svg files)\n* `./data`: Data used for plotting\n\nThe associated website uses the following files:\n\n* `./_includes`, `./web`, `_config.yml` and `index.html`: Content files for the website\n* `./template`: Initial website template used by the website generator\n* `publish.py`: Website generation script\n\nFor the website to work, the content of the `ìnclude` and `web` folder, the `_config.yml` and the `ìndex.html` must be added to a repository.\nThe `./template` folder and `publish.py` file are only used for website generation; publication of these files is not required for the website to work.\nHowever, publication is recommended to allow others to easily create their own website."
+            },
+            {
+                "title": "How to use the tools",
+                "content": "We created a [website](https://gallenmu.github.io/pos-artifacts) that explains how to reproduce this experiment."
+            }
+        ],
+        "description": "# Experiment artifacts\n\nThe plain orchestrating service (pos) is a test controller that creates reproducible network experiments.\nThis repo contains all the artifacts for such an experiment.\n\nThe artifacts contain:\n\n* experiment scripts\n* measurement results\n* evaluation scripts\n* plots\n* website generator"
+    },
+    "repository_url": "https://github.com/gallenmu/pos-artifacts.git",
+    "documentation_url": "https://gallenmu.github.io/pos-artifacts",
+    "contributors": [
+        {
+            "name": "Sebastian Gallenmüller",
+            "email": "gallenmu@net.in.tum.de",
+            "commits": 31
+        }
+    ],
+    "code_updated_at": "2022-03-18 18:17:21",
+    "last_commit_sha": "23db1626c0335ead64a51cbbb0cb845d93b30c77",
+    "version": "1.0.0",
+    "license": {
+        "license": "GNU GENERAL PUBLIC LICENSE",
+        "source": "pos-artifacts/LICENSE"
+    },
+    "experiment": {
+        "steps": {
+            "1": "Free host one",
+            "2": "Free host two",
+            "3": "Allocate host one and host two",
+            "4": "Set image of host one to debian-buster",
+            "5": "Set image of host two to debian-buster",
+            "6": "Load variables from loadgen/variables.yml into host one",
+            "7": "Load variables from dut/variables.yml into host two",
+            "8": "Load global variables from global-variables.yml into host one",
+            "9": "Load loop variables from loop-variables.yml into host one",
+            "10": "Reboot host one",
+            "11": "Reboot host two",
+            "12": "Run loadgen/setup.sh on host one",
+            "13": "Run dut/setup.sh on host two",
+            "14": "Run loadgen/measurement.sh on host one (loop mode)",
+            "15": "Run dut/measurement.sh on host two (loop mode)",
+            "16": "Free host one",
+            "17": "Free host two"
+        },
+        "global_variables": {
+            "moongen_repo": "https://github.com/gallenmu/MoonGen",
+            "moongen_repo_commit": "21641c9c3432fa8a5f93b135cf38b5247750d0a0",
+            "moongen_dir": "/root/moongen",
+            "loadgen_ingress_dev": 1,
+            "loadgen_egress_dev": 0,
+            "loadgen_ingress_if": "ens4",
+            "loadgen_egress_if": "ens5",
+            "loadgen_ingress_mac": "52:54:00:78:0a:23",
+            "loadgen_egress_mac": "52:54:00:78:0a:20",
+            "loadgen_ingress_ip": "10.0.0.20",
+            "loadgen_egress_ip": "10.0.1.23",
+            "loadgen_enable_ip_sw_chksum_calc": 1,
+            "loadgen_enable_offload": 0,
+            "dut_ingress_if": "ens4",
+            "dut_egress_if": "ens5",
+            "dut_ingress_mac": "52:54:00:80:0a:22",
+            "dut_egress_mac": "52:54:00:80:0a:21",
+            "dut_ingress_ip": "10.0.1.22",
+            "dut_egress_ip": "10.0.0.21"
+        },
+        "loop_variables": {
+            "pkt_rate": [
+                10000,
+                20000,
+                30000,
+                40000,
+                50000,
+                60000,
+                70000,
+                80000,
+                90000,
+                100000,
+                110000,
+                120000,
+                130000,
+                140000,
+                150000,
+                160000,
+                170000,
+                180000,
+                190000,
+                200000,
+                210000,
+                220000,
+                230000,
+                240000,
+                250000,
+                260000,
+                270000,
+                280000,
+                290000,
+                300000
+            ],
+            "pkt_sz": [
+                64,
+                1500
+            ]
+        },
+        "source": "pos-artifactsexperiment/experiment.sh",
+        "usage": "setup.sh loadgen-experiment-node dut-experiment-node",
+        "nodes": [
+            {
+                "role": "loadgen",
+                "source": "pos-artifacts/experiment/loadgen",
+                "variables": {
+                    "ingress": 0,
+                    "egress": 1,
+                    "warm_up": 0
+                },
+                "setup_script": {
+                    "source": "pos-artifacts/experiment/loadgen/setup.sh",
+                    "script_type": "setup",
+                    "language": "bash"
+                },
+                "measurement_script": {
+                    "source": "pos-artifacts/experiment/loadgen/measurement.sh",
+                    "script_type": "measurement",
+                    "language": "bash"
+                }
+            },
+            {
+                "role": "dut",
+                "source": "pos-artifacts/experiment/dut",
+                "variables": {
+                    "dummy": "null"
+                },
+                "setup_script": {
+                    "source": "pos-artifacts/experiment/dut/setup.sh",
+                    "script_type": "setup",
+                    "language": "bash"
+                },
+                "measurement_script": {
+                    "source": "pos-artifacts/experiment/dut/measurement.sh",
+                    "script_type": "measurement",
+                    "language": "bash"
+                }
+            }
+        ]
+    },
+    "results": [
+        {
+            "timestamp": "2020-10-07T23:22:39.868017",
+            "configuration": {
+                "pos-artifacts/results/intelexp1.json": {
+                    "hostname": "intelexp1",
+                    "created": "2019-10-22 19:37:51.648452",
+                    "updated": "2020-08-19 14:14:26.987050",
+                    "type": "host",
+                    "fqdn": "intelexp1.blockchain.net.in.tum.de",
+                    "initialization": "intelexp1",
+                    "configuration": "intelexp1",
+                    "energy": "intelexp1",
+                    "phys_address": "ac:1f:6b:b9:35:90",
+                    "description": "intel experiments top",
+                    "boot_serial_console": false,
+                    "blacklist_drivers": [],
+                    "access_groups": [
+                        "french_academy"
+                    ],
+                    "vm_mac_prefix": "52:54:00:78:00:00",
+                    "processor": null,
+                    "disk": null,
+                    "memory": null,
+                    "network": null,
+                    "storage": null,
+                    "volume": null,
+                    "switch": "intelexp1",
+                    "image": "default/debian-buster"
+                },
+                "pos-artifacts/results/tether.json": {
+                    "hostname": "tether",
+                    "created": "2019-10-22 19:37:57.430430",
+                    "updated": "2020-06-23 22:16:05.405998",
+                    "type": "host",
+                    "fqdn": "tether.blockchain.net.in.tum.de",
+                    "initialization": "tether",
+                    "configuration": "tether",
+                    "energy": "tether",
+                    "phys_address": "ac:1f:6b:ba:58:4a",
+                    "description": "40G VM host",
+                    "boot_serial_console": false,
+                    "blacklist_drivers": [],
+                    "access_groups": [
+                        "french_academy"
+                    ],
+                    "vm_mac_prefix": "52:54:00:80:00:00",
+                    "processor": null,
+                    "disk": null,
+                    "memory": null,
+                    "network": null,
+                    "storage": null,
+                    "volume": null,
+                    "switch": "tether",
+                    "image": "default/debian-buster"
+                },
+                "pos-artifacts/results/allocation.json": {
+                    "id": "gallenmu_201007_232239_868017",
+                    "created": "2020-10-07 23:22:39.868332",
+                    "updated": "2020-10-07 23:22:42.756441",
+                    "owner": "gallenmu",
+                    "result_folder": "gallenmu/default/2020-10-07_23-22-39_868017",
+                    "variables": {
+                        "loop": {
+                            "pkt_sz": [
+                                64,
+                                128,
+                                256,
+                                512,
+                                1024,
+                                1280,
+                                1500
+                            ],
+                            "pkt_rate": [
+                                100000,
+                                200000,
+                                300000,
+                                400000,
+                                500000,
+                                600000,
+                                700000,
+                                800000,
+                                900000,
+                                1000000,
+                                1100000,
+                                1200000,
+                                1300000,
+                                1400000,
+                                1500000,
+                                1600000,
+                                1700000,
+                                1800000,
+                                1900000,
+                                2000000
+                            ]
+                        },
+                        "global": {
+                            "moongen_dir": "/root/moongen",
+                            "moongen_repo": "https://github.com/gallenmu/MoonGen",
+                            "dut_egress_if": "ens6f1",
+                            "dut_egress_ip": "10.0.0.21",
+                            "dut_egress_mac": "52:54:00:80:0a:21",
+                            "dut_ingress_if": "ens6f0",
+                            "dut_ingress_ip": "10.0.1.22",
+                            "dut_ingress_mac": "52:54:00:80:0a:22",
+                            "loadgen_egress_if": "ens5",
+                            "loadgen_egress_ip": "10.0.1.23",
+                            "loadgen_egress_dev": 0,
+                            "loadgen_egress_mac": "52:54:00:78:0a:20",
+                            "loadgen_ingress_if": "ens4",
+                            "loadgen_ingress_ip": "10.0.0.20",
+                            "loadgen_ingress_dev": 1,
+                            "loadgen_ingress_mac": "52:54:00:78:0a:23",
+                            "moongen_repo_commit": "e56bb072d8892e3d5c288dec5aa8e0540cc17eb8",
+                            "loadgen_enable_ip_sw_chksum_calc": 0
+                        },
+                        "tether": {
+                            "dummy": "null"
+                        },
+                        "intelexp1": {
+                            "egress": 1,
+                            "ingress": 0,
+                            "warm_up": 0
+                        }
+                    },
+                    "bootparameters": {
+                        "tether": {},
+                        "intelexp1": {}
+                    },
+                    "bootstrapped": {
+                        "tether": false,
+                        "intelexp1": false
+                    },
+                    "token": "f087c810-70b9-4419-bb0f-685ac3de0573",
+                    "nodes": [
+                        "intelexp1",
+                        "tether"
+                    ]
+                }
+            },
+            "logging": {
+                "tether": "pos-artifacts/results/tether",
+                "intelexp1": "pos-artifacts/results/intelexp1"
+            },
+            "results_source": "pos-artifacts/results",
+            "data_source": "pos-artifacts/data",
+            "data": [
+                {
+                    "source_file": "pos-artifacts/data/gallenmu_201007_232239_868017_pkt_sz-64-loop_avg_mpps-001.tsv",
+                    "user": "gallenmu",
+                    "timestamp": "2020-10-07T23:22:39.868017",
+                    "data": [
+                        {
+                            "pkt_rate": 100000.0,
+                            "loop_avg_mpps": 0.1
+                        },
+                        {
+                            "pkt_rate": 200000.0,
+                            "loop_avg_mpps": 0.2
+                        },
+                        {
+                            "pkt_rate": 300000.0,
+                            "loop_avg_mpps": 0.3001
+                        },
+                        {
+                            "pkt_rate": 400000.0,
+                            "loop_avg_mpps": 0.4
+                        },
+                        {
+                            "pkt_rate": 500000.0,
+                            "loop_avg_mpps": 0.5
+                        },
+                        {
+                            "pkt_rate": 600000.0,
+                            "loop_avg_mpps": 0.600192307692308
+                        },
+                        {
+                            "pkt_rate": 700000.0,
+                            "loop_avg_mpps": 0.700484615384615
+                        },
+                        {
+                            "pkt_rate": 800000.0,
+                            "loop_avg_mpps": 0.8003
+                        },
+                        {
+                            "pkt_rate": 900000.0,
+                            "loop_avg_mpps": 0.9009
+                        },
+                        {
+                            "pkt_rate": 1000000.0,
+                            "loop_avg_mpps": 1.0
+                        },
+                        {
+                            "pkt_rate": 1100000.0,
+                            "loop_avg_mpps": 1.10059230769231
+                        },
+                        {
+                            "pkt_rate": 1200000.0,
+                            "loop_avg_mpps": 1.20129230769231
+                        },
+                        {
+                            "pkt_rate": 1300000.0,
+                            "loop_avg_mpps": 1.30108076923077
+                        },
+                        {
+                            "pkt_rate": 1400000.0,
+                            "loop_avg_mpps": 1.40176923076923
+                        },
+                        {
+                            "pkt_rate": 1500000.0,
+                            "loop_avg_mpps": 1.5011
+                        },
+                        {
+                            "pkt_rate": 1600000.0,
+                            "loop_avg_mpps": 1.60057692307692
+                        },
+                        {
+                            "pkt_rate": 1700000.0,
+                            "loop_avg_mpps": 1.70173461538462
+                        },
+                        {
+                            "pkt_rate": 1800000.0,
+                            "loop_avg_mpps": 1.73842307692308
+                        },
+                        {
+                            "pkt_rate": 1900000.0,
+                            "loop_avg_mpps": 1.73619230769231
+                        },
+                        {
+                            "pkt_rate": 2000000.0,
+                            "loop_avg_mpps": 1.73774230769231
+                        }
+                    ]
+                },
+                {
+                    "source_file": "pos-artifacts/data/gallenmu_201007_232239_868017_pkt_sz-64-loop_avg_mpps-000.tsv",
+                    "user": "gallenmu",
+                    "timestamp": "2020-10-07T23:22:39.868017",
+                    "data": [
+                        {
+                            "pkt_rate": 100000.0,
+                            "loop_avg_mpps": 0.1
+                        },
+                        {
+                            "pkt_rate": 200000.0,
+                            "loop_avg_mpps": 0.2
+                        },
+                        {
+                            "pkt_rate": 300000.0,
+                            "loop_avg_mpps": 0.3001
+                        },
+                        {
+                            "pkt_rate": 400000.0,
+                            "loop_avg_mpps": 0.4
+                        },
+                        {
+                            "pkt_rate": 500000.0,
+                            "loop_avg_mpps": 0.5
+                        },
+                        {
+                            "pkt_rate": 600000.0,
+                            "loop_avg_mpps": 0.600184615384615
+                        },
+                        {
+                            "pkt_rate": 700000.0,
+                            "loop_avg_mpps": 0.700473076923077
+                        },
+                        {
+                            "pkt_rate": 800000.0,
+                            "loop_avg_mpps": 0.800315384615385
+                        },
+                        {
+                            "pkt_rate": 900000.0,
+                            "loop_avg_mpps": 0.900907692307692
+                        },
+                        {
+                            "pkt_rate": 1000000.0,
+                            "loop_avg_mpps": 1.0
+                        },
+                        {
+                            "pkt_rate": 1100000.0,
+                            "loop_avg_mpps": 1.10061538461538
+                        },
+                        {
+                            "pkt_rate": 1200000.0,
+                            "loop_avg_mpps": 1.20136923076923
+                        },
+                        {
+                            "pkt_rate": 1300000.0,
+                            "loop_avg_mpps": 1.30111923076923
+                        },
+                        {
+                            "pkt_rate": 1400000.0,
+                            "loop_avg_mpps": 1.40187307692308
+                        },
+                        {
+                            "pkt_rate": 1500000.0,
+                            "loop_avg_mpps": 1.50108076923077
+                        },
+                        {
+                            "pkt_rate": 1600000.0,
+                            "loop_avg_mpps": 1.60062307692308
+                        },
+                        {
+                            "pkt_rate": 1700000.0,
+                            "loop_avg_mpps": 1.70177692307692
+                        },
+                        {
+                            "pkt_rate": 1800000.0,
+                            "loop_avg_mpps": 1.80257692307692
+                        },
+                        {
+                            "pkt_rate": 1900000.0,
+                            "loop_avg_mpps": 1.9039
+                        },
+                        {
+                            "pkt_rate": 2000000.0,
+                            "loop_avg_mpps": 2.00000384615385
+                        }
+                    ]
+                },
+                {
+                    "source_file": "pos-artifacts/data/gallenmu_201007_232239_868017_pkt_sz-1280-loop_avg_mpps-000.tsv",
+                    "user": "gallenmu",
+                    "timestamp": "2020-10-07T23:22:39.868017",
+                    "data": [
+                        {
+                            "pkt_rate": 100000.0,
+                            "loop_avg_mpps": 0.1
+                        },
+                        {
+                            "pkt_rate": 200000.0,
+                            "loop_avg_mpps": 0.2
+                        },
+                        {
+                            "pkt_rate": 300000.0,
+                            "loop_avg_mpps": 0.3001
+                        },
+                        {
+                            "pkt_rate": 400000.0,
+                            "loop_avg_mpps": 0.4
+                        },
+                        {
+                            "pkt_rate": 500000.0,
+                            "loop_avg_mpps": 0.500003846153846
+                        },
+                        {
+                            "pkt_rate": 600000.0,
+                            "loop_avg_mpps": 0.600188461538461
+                        },
+                        {
+                            "pkt_rate": 700000.0,
+                            "loop_avg_mpps": 0.700473076923077
+                        },
+                        {
+                            "pkt_rate": 800000.0,
+                            "loop_avg_mpps": 0.8003
+                        },
+                        {
+                            "pkt_rate": 900000.0,
+                            "loop_avg_mpps": 0.900903846153846
+                        },
+                        {
+                            "pkt_rate": 1000000.0,
+                            "loop_avg_mpps": 0.958507407407407
+                        },
+                        {
+                            "pkt_rate": 1100000.0,
+                            "loop_avg_mpps": 0.9585
+                        },
+                        {
+                            "pkt_rate": 1200000.0,
+                            "loop_avg_mpps": 0.9585
+                        },
+                        {
+                            "pkt_rate": 1300000.0,
+                            "loop_avg_mpps": 0.958502702702703
+                        },
+                        {
+                            "pkt_rate": 1400000.0,
+                            "loop_avg_mpps": 0.958505
+                        },
+                        {
+                            "pkt_rate": 1500000.0,
+                            "loop_avg_mpps": 0.958504651162791
+                        },
+                        {
+                            "pkt_rate": 1600000.0,
+                            "loop_avg_mpps": 0.9585
+                        },
+                        {
+                            "pkt_rate": 1700000.0,
+                            "loop_avg_mpps": 0.9585
+                        },
+                        {
+                            "pkt_rate": 1800000.0,
+                            "loop_avg_mpps": 0.958501923076923
+                        },
+                        {
+                            "pkt_rate": 1900000.0,
+                            "loop_avg_mpps": 0.9585
+                        },
+                        {
+                            "pkt_rate": 2000000.0,
+                            "loop_avg_mpps": 0.9585
+                        }
+                    ]
+                },
+                {
+                    "source_file": "pos-artifacts/data/gallenmu_201007_232239_868017_pkt_sz-1280-loop_avg_mpps-001.tsv",
+                    "user": "gallenmu",
+                    "timestamp": "2020-10-07T23:22:39.868017",
+                    "data": [
+                        {
+                            "pkt_rate": 100000.0,
+                            "loop_avg_mpps": 0.1
+                        },
+                        {
+                            "pkt_rate": 200000.0,
+                            "loop_avg_mpps": 0.2
+                        },
+                        {
+                            "pkt_rate": 300000.0,
+                            "loop_avg_mpps": 0.3001
+                        },
+                        {
+                            "pkt_rate": 400000.0,
+                            "loop_avg_mpps": 0.4
+                        },
+                        {
+                            "pkt_rate": 500000.0,
+                            "loop_avg_mpps": 0.499992307692308
+                        },
+                        {
+                            "pkt_rate": 600000.0,
+                            "loop_avg_mpps": 0.600188461538461
+                        },
+                        {
+                            "pkt_rate": 700000.0,
+                            "loop_avg_mpps": 0.700488461538462
+                        },
+                        {
+                            "pkt_rate": 800000.0,
+                            "loop_avg_mpps": 0.800288461538462
+                        },
+                        {
+                            "pkt_rate": 900000.0,
+                            "loop_avg_mpps": 0.900853846153846
+                        },
+                        {
+                            "pkt_rate": 1000000.0,
+                            "loop_avg_mpps": 0.958485185185185
+                        },
+                        {
+                            "pkt_rate": 1100000.0,
+                            "loop_avg_mpps": 0.95849
+                        },
+                        {
+                            "pkt_rate": 1200000.0,
+                            "loop_avg_mpps": 0.9585
+                        },
+                        {
+                            "pkt_rate": 1300000.0,
+                            "loop_avg_mpps": 0.958486486486486
+                        },
+                        {
+                            "pkt_rate": 1400000.0,
+                            "loop_avg_mpps": 0.958435
+                        },
+                        {
+                            "pkt_rate": 1500000.0,
+                            "loop_avg_mpps": 0.9585
+                        },
+                        {
+                            "pkt_rate": 1600000.0,
+                            "loop_avg_mpps": 0.958471739130435
+                        },
+                        {
+                            "pkt_rate": 1700000.0,
+                            "loop_avg_mpps": 0.9585
+                        },
+                        {
+                            "pkt_rate": 1800000.0,
+                            "loop_avg_mpps": 0.958496153846154
+                        },
+                        {
+                            "pkt_rate": 1900000.0,
+                            "loop_avg_mpps": 0.9585
+                        },
+                        {
+                            "pkt_rate": 2000000.0,
+                            "loop_avg_mpps": 0.958420338983051
+                        }
+                    ]
+                },
+                {
+                    "source_file": "pos-artifacts/data/gallenmu_201007_232239_868017_pkt_sz-1500-loop_avg_mpps-000.tsv",
+                    "user": "gallenmu",
+                    "timestamp": "2020-10-07T23:22:39.868017",
+                    "data": [
+                        {
+                            "pkt_rate": 100000.0,
+                            "loop_avg_mpps": 0.1
+                        },
+                        {
+                            "pkt_rate": 200000.0,
+                            "loop_avg_mpps": 0.2
+                        },
+                        {
+                            "pkt_rate": 300000.0,
+                            "loop_avg_mpps": 0.3001
+                        },
+                        {
+                            "pkt_rate": 400000.0,
+                            "loop_avg_mpps": 0.4
+                        },
+                        {
+                            "pkt_rate": 500000.0,
+                            "loop_avg_mpps": 0.500011538461538
+                        },
+                        {
+                            "pkt_rate": 600000.0,
+                            "loop_avg_mpps": 0.600184615384615
+                        },
+                        {
+                            "pkt_rate": 700000.0,
+                            "loop_avg_mpps": 0.700476923076923
+                        },
+                        {
+                            "pkt_rate": 800000.0,
+                            "loop_avg_mpps": 0.800303846153846
+                        },
+                        {
+                            "pkt_rate": 900000.0,
+                            "loop_avg_mpps": 0.820124137931034
+                        },
+                        {
+                            "pkt_rate": 1000000.0,
+                            "loop_avg_mpps": 0.820121212121212
+                        },
+                        {
+                            "pkt_rate": 1100000.0,
+                            "loop_avg_mpps": 0.820125
+                        },
+                        {
+                            "pkt_rate": 1200000.0,
+                            "loop_avg_mpps": 0.82012
+                        },
+                        {
+                            "pkt_rate": 1300000.0,
+                            "loop_avg_mpps": 0.820120454545454
+                        },
+                        {
+                            "pkt_rate": 1400000.0,
+                            "loop_avg_mpps": 0.820123404255318
+                        },
+                        {
+                            "pkt_rate": 1500000.0,
+                            "loop_avg_mpps": 0.820121568627451
+                        },
+                        {
+                            "pkt_rate": 1600000.0,
+                            "loop_avg_mpps": 0.82012037037037
+                        },
+                        {
+                            "pkt_rate": 1700000.0,
+                            "loop_avg_mpps": 0.820115517241379
+                        },
+                        {
+                            "pkt_rate": 1800000.0,
+                            "loop_avg_mpps": 0.820119354838709
+                        },
+                        {
+                            "pkt_rate": 1900000.0,
+                            "loop_avg_mpps": 0.820116923076923
+                        },
+                        {
+                            "pkt_rate": 2000000.0,
+                            "loop_avg_mpps": 0.820117391304348
+                        }
+                    ]
+                },
+                {
+                    "source_file": "pos-artifacts/data/gallenmu_201007_232239_868017_pkt_sz-1500-loop_avg_mpps-001.tsv",
+                    "user": "gallenmu",
+                    "timestamp": "2020-10-07T23:22:39.868017",
+                    "data": [
+                        {
+                            "pkt_rate": 100000.0,
+                            "loop_avg_mpps": 0.1
+                        },
+                        {
+                            "pkt_rate": 200000.0,
+                            "loop_avg_mpps": 0.2
+                        },
+                        {
+                            "pkt_rate": 300000.0,
+                            "loop_avg_mpps": 0.3001
+                        },
+                        {
+                            "pkt_rate": 400000.0,
+                            "loop_avg_mpps": 0.4
+                        },
+                        {
+                            "pkt_rate": 500000.0,
+                            "loop_avg_mpps": 0.5
+                        },
+                        {
+                            "pkt_rate": 600000.0,
+                            "loop_avg_mpps": 0.600180769230769
+                        },
+                        {
+                            "pkt_rate": 700000.0,
+                            "loop_avg_mpps": 0.700484615384615
+                        },
+                        {
+                            "pkt_rate": 800000.0,
+                            "loop_avg_mpps": 0.800288461538462
+                        },
+                        {
+                            "pkt_rate": 900000.0,
+                            "loop_avg_mpps": 0.820079310344828
+                        },
+                        {
+                            "pkt_rate": 1000000.0,
+                            "loop_avg_mpps": 0.82009696969697
+                        },
+                        {
+                            "pkt_rate": 1100000.0,
+                            "loop_avg_mpps": 0.8201
+                        },
+                        {
+                            "pkt_rate": 1200000.0,
+                            "loop_avg_mpps": 0.8200975
+                        },
+                        {
+                            "pkt_rate": 1300000.0,
+                            "loop_avg_mpps": 0.820095454545454
+                        },
+                        {
+                            "pkt_rate": 1400000.0,
+                            "loop_avg_mpps": 0.820097872340425
+                        },
+                        {
+                            "pkt_rate": 1500000.0,
+                            "loop_avg_mpps": 0.8201
+                        },
+                        {
+                            "pkt_rate": 1600000.0,
+                            "loop_avg_mpps": 0.820083636363636
+                        },
+                        {
+                            "pkt_rate": 1700000.0,
+                            "loop_avg_mpps": 0.820098275862069
+                        },
+                        {
+                            "pkt_rate": 1800000.0,
+                            "loop_avg_mpps": 0.820090322580645
+                        },
+                        {
+                            "pkt_rate": 1900000.0,
+                            "loop_avg_mpps": 0.820089393939394
+                        },
+                        {
+                            "pkt_rate": 2000000.0,
+                            "loop_avg_mpps": 0.820097101449275
+                        }
+                    ]
+                },
+                {
+                    "source_file": "pos-artifacts/data/gallenmu_201007_232239_868017_pkt_sz-512-loop_avg_mpps-001.tsv",
+                    "user": "gallenmu",
+                    "timestamp": "2020-10-07T23:22:39.868017",
+                    "data": [
+                        {
+                            "pkt_rate": 100000.0,
+                            "loop_avg_mpps": 0.1
+                        },
+                        {
+                            "pkt_rate": 200000.0,
+                            "loop_avg_mpps": 0.2
+                        },
+                        {
+                            "pkt_rate": 300000.0,
+                            "loop_avg_mpps": 0.3001
+                        },
+                        {
+                            "pkt_rate": 400000.0,
+                            "loop_avg_mpps": 0.4
+                        },
+                        {
+                            "pkt_rate": 500000.0,
+                            "loop_avg_mpps": 0.5
+                        },
+                        {
+                            "pkt_rate": 600000.0,
+                            "loop_avg_mpps": 0.600188461538461
+                        },
+                        {
+                            "pkt_rate": 700000.0,
+                            "loop_avg_mpps": 0.700484615384615
+                        },
+                        {
+                            "pkt_rate": 800000.0,
+                            "loop_avg_mpps": 0.800276923076923
+                        },
+                        {
+                            "pkt_rate": 900000.0,
+                            "loop_avg_mpps": 0.900873076923077
+                        },
+                        {
+                            "pkt_rate": 1000000.0,
+                            "loop_avg_mpps": 1.0
+                        },
+                        {
+                            "pkt_rate": 1100000.0,
+                            "loop_avg_mpps": 1.10061153846154
+                        },
+                        {
+                            "pkt_rate": 1200000.0,
+                            "loop_avg_mpps": 1.2014
+                        },
+                        {
+                            "pkt_rate": 1300000.0,
+                            "loop_avg_mpps": 1.30106538461538
+                        },
+                        {
+                            "pkt_rate": 1400000.0,
+                            "loop_avg_mpps": 1.40182307692308
+                        },
+                        {
+                            "pkt_rate": 1500000.0,
+                            "loop_avg_mpps": 1.50105769230769
+                        },
+                        {
+                            "pkt_rate": 1600000.0,
+                            "loop_avg_mpps": 1.60056923076923
+                        },
+                        {
+                            "pkt_rate": 1700000.0,
+                            "loop_avg_mpps": 1.70177692307692
+                        },
+                        {
+                            "pkt_rate": 1800000.0,
+                            "loop_avg_mpps": 1.74031153846154
+                        },
+                        {
+                            "pkt_rate": 1900000.0,
+                            "loop_avg_mpps": 1.74077692307692
+                        },
+                        {
+                            "pkt_rate": 2000000.0,
+                            "loop_avg_mpps": 1.73863461538462
+                        }
+                    ]
+                },
+                {
+                    "source_file": "pos-artifacts/data/gallenmu_201007_232239_868017_pkt_sz-512-loop_avg_mpps-000.tsv",
+                    "user": "gallenmu",
+                    "timestamp": "2020-10-07T23:22:39.868017",
+                    "data": [
+                        {
+                            "pkt_rate": 100000.0,
+                            "loop_avg_mpps": 0.1
+                        },
+                        {
+                            "pkt_rate": 200000.0,
+                            "loop_avg_mpps": 0.2
+                        },
+                        {
+                            "pkt_rate": 300000.0,
+                            "loop_avg_mpps": 0.3001
+                        },
+                        {
+                            "pkt_rate": 400000.0,
+                            "loop_avg_mpps": 0.4
+                        },
+                        {
+                            "pkt_rate": 500000.0,
+                            "loop_avg_mpps": 0.500003846153846
+                        },
+                        {
+                            "pkt_rate": 600000.0,
+                            "loop_avg_mpps": 0.600188461538461
+                        },
+                        {
+                            "pkt_rate": 700000.0,
+                            "loop_avg_mpps": 0.700476923076923
+                        },
+                        {
+                            "pkt_rate": 800000.0,
+                            "loop_avg_mpps": 0.800303846153846
+                        },
+                        {
+                            "pkt_rate": 900000.0,
+                            "loop_avg_mpps": 0.9009
+                        },
+                        {
+                            "pkt_rate": 1000000.0,
+                            "loop_avg_mpps": 1.0
+                        },
+                        {
+                            "pkt_rate": 1100000.0,
+                            "loop_avg_mpps": 1.10063076923077
+                        },
+                        {
+                            "pkt_rate": 1200000.0,
+                            "loop_avg_mpps": 1.20138461538462
+                        },
+                        {
+                            "pkt_rate": 1300000.0,
+                            "loop_avg_mpps": 1.30112307692308
+                        },
+                        {
+                            "pkt_rate": 1400000.0,
+                            "loop_avg_mpps": 1.40188076923077
+                        },
+                        {
+                            "pkt_rate": 1500000.0,
+                            "loop_avg_mpps": 1.50108076923077
+                        },
+                        {
+                            "pkt_rate": 1600000.0,
+                            "loop_avg_mpps": 1.60061153846154
+                        },
+                        {
+                            "pkt_rate": 1700000.0,
+                            "loop_avg_mpps": 1.70179615384615
+                        },
+                        {
+                            "pkt_rate": 1800000.0,
+                            "loop_avg_mpps": 1.80258461538462
+                        },
+                        {
+                            "pkt_rate": 1900000.0,
+                            "loop_avg_mpps": 1.90389615384615
+                        },
+                        {
+                            "pkt_rate": 2000000.0,
+                            "loop_avg_mpps": 1.99999615384615
+                        }
+                    ]
+                },
+                {
+                    "source_file": "pos-artifacts/data/gallenmu_201007_232239_868017_pkt_sz-1024-loop_avg_mpps-001.tsv",
+                    "user": "gallenmu",
+                    "timestamp": "2020-10-07T23:22:39.868017",
+                    "data": [
+                        {
+                            "pkt_rate": 100000.0,
+                            "loop_avg_mpps": 0.1
+                        },
+                        {
+                            "pkt_rate": 200000.0,
+                            "loop_avg_mpps": 0.2
+                        },
+                        {
+                            "pkt_rate": 300000.0,
+                            "loop_avg_mpps": 0.3001
+                        },
+                        {
+                            "pkt_rate": 400000.0,
+                            "loop_avg_mpps": 0.4
+                        },
+                        {
+                            "pkt_rate": 500000.0,
+                            "loop_avg_mpps": 0.5
+                        },
+                        {
+                            "pkt_rate": 600000.0,
+                            "loop_avg_mpps": 0.600188461538461
+                        },
+                        {
+                            "pkt_rate": 700000.0,
+                            "loop_avg_mpps": 0.700480769230769
+                        },
+                        {
+                            "pkt_rate": 800000.0,
+                            "loop_avg_mpps": 0.800280769230769
+                        },
+                        {
+                            "pkt_rate": 900000.0,
+                            "loop_avg_mpps": 0.9009
+                        },
+                        {
+                            "pkt_rate": 1000000.0,
+                            "loop_avg_mpps": 0.999919230769231
+                        },
+                        {
+                            "pkt_rate": 1100000.0,
+                            "loop_avg_mpps": 1.10054230769231
+                        },
+                        {
+                            "pkt_rate": 1200000.0,
+                            "loop_avg_mpps": 1.19255
+                        },
+                        {
+                            "pkt_rate": 1300000.0,
+                            "loop_avg_mpps": 1.19264482758621
+                        },
+                        {
+                            "pkt_rate": 1400000.0,
+                            "loop_avg_mpps": 1.19256451612903
+                        },
+                        {
+                            "pkt_rate": 1500000.0,
+                            "loop_avg_mpps": 1.19260882352941
+                        },
+                        {
+                            "pkt_rate": 1600000.0,
+                            "loop_avg_mpps": 1.19260555555556
+                        },
+                        {
+                            "pkt_rate": 1700000.0,
+                            "loop_avg_mpps": 1.19265897435897
+                        },
+                        {
+                            "pkt_rate": 1800000.0,
+                            "loop_avg_mpps": 1.19266097560976
+                        },
+                        {
+                            "pkt_rate": 1900000.0,
+                            "loop_avg_mpps": 1.19265909090909
+                        },
+                        {
+                            "pkt_rate": 2000000.0,
+                            "loop_avg_mpps": 1.19264347826087
+                        }
+                    ]
+                },
+                {
+                    "source_file": "pos-artifacts/data/gallenmu_201007_232239_868017_pkt_sz-256-loop_avg_mpps-000.tsv",
+                    "user": "gallenmu",
+                    "timestamp": "2020-10-07T23:22:39.868017",
+                    "data": [
+                        {
+                            "pkt_rate": 100000.0,
+                            "loop_avg_mpps": 0.1
+                        },
+                        {
+                            "pkt_rate": 200000.0,
+                            "loop_avg_mpps": 0.2
+                        },
+                        {
+                            "pkt_rate": 300000.0,
+                            "loop_avg_mpps": 0.3001
+                        },
+                        {
+                            "pkt_rate": 400000.0,
+                            "loop_avg_mpps": 0.400092307692308
+                        },
+                        {
+                            "pkt_rate": 500000.0,
+                            "loop_avg_mpps": 0.500007692307692
+                        },
+                        {
+                            "pkt_rate": 600000.0,
+                            "loop_avg_mpps": 0.600192307692308
+                        },
+                        {
+                            "pkt_rate": 700000.0,
+                            "loop_avg_mpps": 0.700480769230769
+                        },
+                        {
+                            "pkt_rate": 800000.0,
+                            "loop_avg_mpps": 0.8003
+                        },
+                        {
+                            "pkt_rate": 900000.0,
+                            "loop_avg_mpps": 0.900915384615385
+                        },
+                        {
+                            "pkt_rate": 1000000.0,
+                            "loop_avg_mpps": 1.0
+                        },
+                        {
+                            "pkt_rate": 1100000.0,
+                            "loop_avg_mpps": 1.10061923076923
+                        },
+                        {
+                            "pkt_rate": 1200000.0,
+                            "loop_avg_mpps": 1.20138076923077
+                        },
+                        {
+                            "pkt_rate": 1300000.0,
+                            "loop_avg_mpps": 1.30112692307692
+                        },
+                        {
+                            "pkt_rate": 1400000.0,
+                            "loop_avg_mpps": 1.40188076923077
+                        },
+                        {
+                            "pkt_rate": 1500000.0,
+                            "loop_avg_mpps": 1.50107307692308
+                        },
+                        {
+                            "pkt_rate": 1600000.0,
+                            "loop_avg_mpps": 1.60061538461538
+                        },
+                        {
+                            "pkt_rate": 1700000.0,
+                            "loop_avg_mpps": 1.70177307692308
+                        },
+                        {
+                            "pkt_rate": 1800000.0,
+                            "loop_avg_mpps": 1.80258461538462
+                        },
+                        {
+                            "pkt_rate": 1900000.0,
+                            "loop_avg_mpps": 1.90389615384615
+                        },
+                        {
+                            "pkt_rate": 2000000.0,
+                            "loop_avg_mpps": 2.0
+                        }
+                    ]
+                },
+                {
+                    "source_file": "pos-artifacts/data/gallenmu_201007_232239_868017_pkt_sz-128-loop_avg_mpps-001.tsv",
+                    "user": "gallenmu",
+                    "timestamp": "2020-10-07T23:22:39.868017",
+                    "data": [
+                        {
+                            "pkt_rate": 100000.0,
+                            "loop_avg_mpps": 0.1
+                        },
+                        {
+                            "pkt_rate": 200000.0,
+                            "loop_avg_mpps": 0.2
+                        },
+                        {
+                            "pkt_rate": 300000.0,
+                            "loop_avg_mpps": 0.3001
+                        },
+                        {
+                            "pkt_rate": 400000.0,
+                            "loop_avg_mpps": 0.4
+                        },
+                        {
+                            "pkt_rate": 500000.0,
+                            "loop_avg_mpps": 0.5
+                        },
+                        {
+                            "pkt_rate": 600000.0,
+                            "loop_avg_mpps": 0.600192307692308
+                        },
+                        {
+                            "pkt_rate": 700000.0,
+                            "loop_avg_mpps": 0.700476923076923
+                        },
+                        {
+                            "pkt_rate": 800000.0,
+                            "loop_avg_mpps": 0.800292307692308
+                        },
+                        {
+                            "pkt_rate": 900000.0,
+                            "loop_avg_mpps": 0.9009
+                        },
+                        {
+                            "pkt_rate": 1000000.0,
+                            "loop_avg_mpps": 1.00047692307692
+                        },
+                        {
+                            "pkt_rate": 1100000.0,
+                            "loop_avg_mpps": 1.10060384615385
+                        },
+                        {
+                            "pkt_rate": 1200000.0,
+                            "loop_avg_mpps": 1.20135384615385
+                        },
+                        {
+                            "pkt_rate": 1300000.0,
+                            "loop_avg_mpps": 1.3011
+                        },
+                        {
+                            "pkt_rate": 1400000.0,
+                            "loop_avg_mpps": 1.40182692307692
+                        },
+                        {
+                            "pkt_rate": 1500000.0,
+                            "loop_avg_mpps": 1.50107307692308
+                        },
+                        {
+                            "pkt_rate": 1600000.0,
+                            "loop_avg_mpps": 1.60057307692308
+                        },
+                        {
+                            "pkt_rate": 1700000.0,
+                            "loop_avg_mpps": 1.70175769230769
+                        },
+                        {
+                            "pkt_rate": 1800000.0,
+                            "loop_avg_mpps": 1.73839230769231
+                        },
+                        {
+                            "pkt_rate": 1900000.0,
+                            "loop_avg_mpps": 1.73793461538462
+                        },
+                        {
+                            "pkt_rate": 2000000.0,
+                            "loop_avg_mpps": 1.73857692307692
+                        }
+                    ]
+                },
+                {
+                    "source_file": "pos-artifacts/data/gallenmu_201007_232239_868017_pkt_sz-128-loop_avg_mpps-000.tsv",
+                    "user": "gallenmu",
+                    "timestamp": "2020-10-07T23:22:39.868017",
+                    "data": [
+                        {
+                            "pkt_rate": 100000.0,
+                            "loop_avg_mpps": 0.1
+                        },
+                        {
+                            "pkt_rate": 200000.0,
+                            "loop_avg_mpps": 0.2
+                        },
+                        {
+                            "pkt_rate": 300000.0,
+                            "loop_avg_mpps": 0.3001
+                        },
+                        {
+                            "pkt_rate": 400000.0,
+                            "loop_avg_mpps": 0.4
+                        },
+                        {
+                            "pkt_rate": 500000.0,
+                            "loop_avg_mpps": 0.500003846153846
+                        },
+                        {
+                            "pkt_rate": 600000.0,
+                            "loop_avg_mpps": 0.600188461538461
+                        },
+                        {
+                            "pkt_rate": 700000.0,
+                            "loop_avg_mpps": 0.700465384615385
+                        },
+                        {
+                            "pkt_rate": 800000.0,
+                            "loop_avg_mpps": 0.800303846153846
+                        },
+                        {
+                            "pkt_rate": 900000.0,
+                            "loop_avg_mpps": 0.9009
+                        },
+                        {
+                            "pkt_rate": 1000000.0,
+                            "loop_avg_mpps": 1.00048461538462
+                        },
+                        {
+                            "pkt_rate": 1100000.0,
+                            "loop_avg_mpps": 1.10060769230769
+                        },
+                        {
+                            "pkt_rate": 1200000.0,
+                            "loop_avg_mpps": 1.20137307692308
+                        },
+                        {
+                            "pkt_rate": 1300000.0,
+                            "loop_avg_mpps": 1.30110384615385
+                        },
+                        {
+                            "pkt_rate": 1400000.0,
+                            "loop_avg_mpps": 1.40187307692308
+                        },
+                        {
+                            "pkt_rate": 1500000.0,
+                            "loop_avg_mpps": 1.50108076923077
+                        },
+                        {
+                            "pkt_rate": 1600000.0,
+                            "loop_avg_mpps": 1.60062307692308
+                        },
+                        {
+                            "pkt_rate": 1700000.0,
+                            "loop_avg_mpps": 1.70178076923077
+                        },
+                        {
+                            "pkt_rate": 1800000.0,
+                            "loop_avg_mpps": 1.80258461538462
+                        },
+                        {
+                            "pkt_rate": 1900000.0,
+                            "loop_avg_mpps": 1.9039
+                        },
+                        {
+                            "pkt_rate": 2000000.0,
+                            "loop_avg_mpps": 2.0
+                        }
+                    ]
+                },
+                {
+                    "source_file": "pos-artifacts/data/gallenmu_201007_232239_868017_pkt_sz-256-loop_avg_mpps-001.tsv",
+                    "user": "gallenmu",
+                    "timestamp": "2020-10-07T23:22:39.868017",
+                    "data": [
+                        {
+                            "pkt_rate": 100000.0,
+                            "loop_avg_mpps": 0.1
+                        },
+                        {
+                            "pkt_rate": 200000.0,
+                            "loop_avg_mpps": 0.2
+                        },
+                        {
+                            "pkt_rate": 300000.0,
+                            "loop_avg_mpps": 0.3001
+                        },
+                        {
+                            "pkt_rate": 400000.0,
+                            "loop_avg_mpps": 0.400088461538462
+                        },
+                        {
+                            "pkt_rate": 500000.0,
+                            "loop_avg_mpps": 0.5
+                        },
+                        {
+                            "pkt_rate": 600000.0,
+                            "loop_avg_mpps": 0.600188461538461
+                        },
+                        {
+                            "pkt_rate": 700000.0,
+                            "loop_avg_mpps": 0.700492307692308
+                        },
+                        {
+                            "pkt_rate": 800000.0,
+                            "loop_avg_mpps": 0.800253846153846
+                        },
+                        {
+                            "pkt_rate": 900000.0,
+                            "loop_avg_mpps": 0.90085
+                        },
+                        {
+                            "pkt_rate": 1000000.0,
+                            "loop_avg_mpps": 0.999980769230769
+                        },
+                        {
+                            "pkt_rate": 1100000.0,
+                            "loop_avg_mpps": 1.1006
+                        },
+                        {
+                            "pkt_rate": 1200000.0,
+                            "loop_avg_mpps": 1.2014
+                        },
+                        {
+                            "pkt_rate": 1300000.0,
+                            "loop_avg_mpps": 1.30103461538462
+                        },
+                        {
+                            "pkt_rate": 1400000.0,
+                            "loop_avg_mpps": 1.40189615384615
+                        },
+                        {
+                            "pkt_rate": 1500000.0,
+                            "loop_avg_mpps": 1.50092692307692
+                        },
+                        {
+                            "pkt_rate": 1600000.0,
+                            "loop_avg_mpps": 1.60048846153846
+                        },
+                        {
+                            "pkt_rate": 1700000.0,
+                            "loop_avg_mpps": 1.70179615384615
+                        },
+                        {
+                            "pkt_rate": 1800000.0,
+                            "loop_avg_mpps": 1.73761153846154
+                        },
+                        {
+                            "pkt_rate": 1900000.0,
+                            "loop_avg_mpps": 1.73846153846154
+                        },
+                        {
+                            "pkt_rate": 2000000.0,
+                            "loop_avg_mpps": 1.73765384615385
+                        }
+                    ]
+                },
+                {
+                    "source_file": "pos-artifacts/data/gallenmu_201007_232239_868017_pkt_sz-1024-loop_avg_mpps-000.tsv",
+                    "user": "gallenmu",
+                    "timestamp": "2020-10-07T23:22:39.868017",
+                    "data": [
+                        {
+                            "pkt_rate": 100000.0,
+                            "loop_avg_mpps": 0.1
+                        },
+                        {
+                            "pkt_rate": 200000.0,
+                            "loop_avg_mpps": 0.2
+                        },
+                        {
+                            "pkt_rate": 300000.0,
+                            "loop_avg_mpps": 0.3001
+                        },
+                        {
+                            "pkt_rate": 400000.0,
+                            "loop_avg_mpps": 0.4
+                        },
+                        {
+                            "pkt_rate": 500000.0,
+                            "loop_avg_mpps": 0.500007692307692
+                        },
+                        {
+                            "pkt_rate": 600000.0,
+                            "loop_avg_mpps": 0.600196153846154
+                        },
+                        {
+                            "pkt_rate": 700000.0,
+                            "loop_avg_mpps": 0.700480769230769
+                        },
+                        {
+                            "pkt_rate": 800000.0,
+                            "loop_avg_mpps": 0.800303846153846
+                        },
+                        {
+                            "pkt_rate": 900000.0,
+                            "loop_avg_mpps": 0.900903846153846
+                        },
+                        {
+                            "pkt_rate": 1000000.0,
+                            "loop_avg_mpps": 1.00000384615385
+                        },
+                        {
+                            "pkt_rate": 1100000.0,
+                            "loop_avg_mpps": 1.10061538461538
+                        },
+                        {
+                            "pkt_rate": 1200000.0,
+                            "loop_avg_mpps": 1.19266923076923
+                        },
+                        {
+                            "pkt_rate": 1300000.0,
+                            "loop_avg_mpps": 1.19268620689655
+                        },
+                        {
+                            "pkt_rate": 1400000.0,
+                            "loop_avg_mpps": 1.19267096774194
+                        },
+                        {
+                            "pkt_rate": 1500000.0,
+                            "loop_avg_mpps": 1.19267058823529
+                        },
+                        {
+                            "pkt_rate": 1600000.0,
+                            "loop_avg_mpps": 1.19267777777778
+                        },
+                        {
+                            "pkt_rate": 1700000.0,
+                            "loop_avg_mpps": 1.19267692307692
+                        },
+                        {
+                            "pkt_rate": 1800000.0,
+                            "loop_avg_mpps": 1.1926756097561
+                        },
+                        {
+                            "pkt_rate": 1900000.0,
+                            "loop_avg_mpps": 1.19267727272727
+                        },
+                        {
+                            "pkt_rate": 2000000.0,
+                            "loop_avg_mpps": 1.19268913043478
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "manual_metadata": {
+        "custom": "metadata"
+    },
+    "experiment_name": "pos-artifacts"
+}
