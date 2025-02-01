@@ -4,6 +4,7 @@ from loguru import logger
 from dotenv import load_dotenv
 import os
 
+from extract.generic_information.get_created_at_date import get_created_at_date
 from extract.generic_information.get_experiment_contributors import get_experiment_contributors
 from extract.generic_information.get_experiment_license import get_experiment_license
 from extract.generic_information.get_experiment_title import get_experiment_title
@@ -42,6 +43,9 @@ def extract_metadata_from_pos_experiment(absolute_path_to_experiment, experiment
 
     contributors = get_experiment_contributors(absolute_path_to_experiment)
     metadata["contributors"] = contributors if contributors else None
+
+    code_created_at = get_created_at_date(absolute_path_to_experiment)
+    metadata["code_created_at"] = code_created_at if code_created_at else None
 
     code_updated_at, last_commit_sha = get_last_updated_date(absolute_path_to_experiment)
     metadata["code_updated_at"] = code_updated_at if code_updated_at else None

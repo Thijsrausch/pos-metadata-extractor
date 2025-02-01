@@ -2,7 +2,6 @@ import subprocess
 import re
 
 
-# TODO - fix
 def get_github_username(repo_path):
     try:
         # Run git command to get the remote URL

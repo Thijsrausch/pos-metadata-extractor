@@ -2,4 +2,4 @@ import os
 
 
 def is_running_locally():
-    return os.getenv('GITHUB_ACTIONS') != 'true'
+    return os.getenv('ACTION') != 'true'
