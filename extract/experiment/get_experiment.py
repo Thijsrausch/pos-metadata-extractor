@@ -37,7 +37,7 @@ def get_experiment(absolute_path_to_experiment, experiment_name):
         'steps': [],
         'global_variables': [], 
         'loop_variables': [],
-        'source': experiment_name + 'experiment/experiment.sh',
+        'source': experiment_name + '/experiment/experiment.sh',
         'usage': '',
         'nodes': []
     }
